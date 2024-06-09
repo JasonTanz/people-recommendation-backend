@@ -1,8 +1,12 @@
+import { ServiceResponse } from '../@types/common';
+import { TRecommendedUser } from '../@types/recommend';
+import { TUser, TUserPayload } from '../@types/user';
 import { logger } from '../config/logger';
 import db from '../models';
 import { isEmpty } from 'lodash';
+import { Op } from 'sequelize';
 
-const create = async (body) => {
+const create = async (body: TUserPayload): Promise<ServiceResponse<TUser>> => {
   try {
     const user = await db.users.create(body);
     logger.info(`User created: ${user.name}`);
@@ -13,9 +17,15 @@ const create = async (body) => {
   }
 };
 
-const getByName = async (name) => {
+const getByName = async (name: string): Promise<ServiceResponse<TUser>> => {
   try {
-    const user = await db.users.findOne({ where: { name } });
+    const user = await db.users.findOne({
+      where: {
+        name: {
+          [Op.iLike]: name,
+        },
+      },
+    });
     return [null, user];
   } catch (error) {
     logger.error(`Error finding user: ${error.message}`);
@@ -23,10 +33,9 @@ const getByName = async (name) => {
   }
 };
 
-const queryBuilder = (history) => {
+const queryBuilder = (history: string[]): string => {
   let whereClause = '';
 
-  console.log('history------>', history);
   if (!isEmpty(history)) {
     whereClause = 'AND id NOT IN(:historyIds)';
   }
@@ -63,10 +72,15 @@ const queryBuilder = (history) => {
   `;
 };
 
-const getSuggestion = async ({ ownerId, history }) => {
+const getSuggestion = async ({
+  ownerId,
+  history,
+}: {
+  ownerId: string;
+  history: string[];
+}): Promise<ServiceResponse<TRecommendedUser[]>> => {
   try {
     const query = queryBuilder(history);
-    console.log(query);
 
     const suggestions = await db.sequelize.query(query, {
       replacements: { ownerId, historyIds: history },

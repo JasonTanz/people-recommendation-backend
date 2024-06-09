@@ -1,7 +1,12 @@
 import { userService } from '../services';
 import { logger } from '../config/logger';
+import { NextFunction, Request, Response } from 'express';
 
-const validateUserAlreadyExists = async (req, res, next) => {
+const validateUserAlreadyExists = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   console.log(req.body);
   try {
     const [err, user] = await userService.getByName(req.body.name);

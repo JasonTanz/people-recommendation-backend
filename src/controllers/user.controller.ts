@@ -1,7 +1,15 @@
+import { TBaseUser } from '../@types/user';
 import logger from '../config/logger';
 import { recommendationService, userService } from '../services';
-
-const getRecommendations = async (req, res) => {
+import { Request, Response } from 'express';
+const getRecommendations = async (
+  req: Request & {
+    decoded: {
+      user: TBaseUser;
+    };
+  },
+  res,
+): Promise<Response> => {
   const id = req.decoded.user.id;
   try {
     // todo get id only

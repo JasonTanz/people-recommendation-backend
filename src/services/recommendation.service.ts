@@ -1,7 +1,12 @@
 import db from '../models';
 import logger from '../config/logger';
 import { Op } from 'sequelize';
-export const bulkInsert = async (body) => {
+import { TRecommendation, TRecommendationPayload } from '../@types/recommend';
+import { ServiceResponse } from '../@types/common';
+
+export const bulkInsert = async (
+  body: TRecommendationPayload[],
+): Promise<ServiceResponse<TRecommendation[]>> => {
   try {
     const recommendation = await db.recommendations.bulkCreate(body);
     logger.info(`Recommendations created`);
@@ -12,7 +17,9 @@ export const bulkInsert = async (body) => {
   }
 };
 
-export const getByUserId = async (userId: string) => {
+export const getByUserId = async (
+  userId: string,
+): Promise<ServiceResponse<Pick<TRecommendation, 'recommendedUserId'>[]>> => {
   try {
     const recommendations = await db.recommendations.findAll({
       where: { userId },
