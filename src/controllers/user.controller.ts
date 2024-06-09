@@ -20,7 +20,6 @@ const getRecommendations = async (
         history: history.map((h) => h.recommendedUserId),
       });
       if (suggestions) {
-        console.log(suggestions);
         const ids = suggestions.map((suggestion) => ({
           userId: id,
           recommendedUserId: suggestion.id,

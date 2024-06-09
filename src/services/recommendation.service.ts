@@ -41,13 +41,9 @@ export const checkRecommendationLimit = async ({ userId, today, tomorrow }) => {
       where: {
         userId,
         createdAt: {
-          [Op.gte]: tomorrow.toDate(),
-          [Op.lt]: today.toDate(),
+          [Op.gte]: today,
+          [Op.lt]: tomorrow,
         },
-        // createdAt: {
-        //   [Op.gte]: today,
-        //   [Op.lt]: tomorrow,
-        // },
       },
       include: [
         {

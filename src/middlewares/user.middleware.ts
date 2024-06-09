@@ -7,7 +7,6 @@ const validateUserAlreadyExists = async (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log(req.body);
   try {
     const [err, user] = await userService.getByName(req.body.name);
     if (err) {
