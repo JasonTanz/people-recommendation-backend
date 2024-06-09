@@ -14,7 +14,8 @@ export const signupSchema = joi.object({
       'Multimedia University',
       'TARUMT',
       'University Malaya',
-      "Taylor's University",
+      'Sunway University',
+      'SEGi',
     )
     .required(),
   interests: joi
