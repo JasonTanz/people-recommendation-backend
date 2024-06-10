@@ -10,17 +10,12 @@ const config = require('../config/config')[env];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = {} as any;
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config,
-  );
-}
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config,
+);
 
 fs.readdirSync(__dirname)
   .filter((file) => {
