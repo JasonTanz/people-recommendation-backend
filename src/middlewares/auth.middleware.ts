@@ -21,7 +21,7 @@ export const ValidateJWT = (req, res, next) => {
       logger.error(`JWT: ${err.message}`);
       return res
         .status(401)
-        .json({ status: false, error: 'Token is not valid' });
+        .json({ status: false, message: 'Token is not valid' });
     }
     req.decoded = decoded;
     next();
