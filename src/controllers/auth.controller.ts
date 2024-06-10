@@ -60,7 +60,7 @@ const login = async (req: Request, res: Response): Promise<Response> => {
     if (err) {
       return res.status(500).json({
         status: false,
-        message: 'error logging in the user',
+        message: 'Error logging in the user',
         error: err,
       });
     }

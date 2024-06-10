@@ -28,7 +28,7 @@ const getByName = async (name: string): Promise<ServiceResponse<TUser>> => {
     });
     return [null, user];
   } catch (error) {
-    logger.error(`Error finding user: ${error.message}`);
+    logger.error(`Error finding user: ${error}`);
     return [error, null];
   }
 };
