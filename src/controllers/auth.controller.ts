@@ -4,7 +4,7 @@ import { logger } from '../config/logger';
 import { Request, Response } from 'express';
 
 const checkAuth = async (req, res): Promise<Response> => {
-  return res.status(204).json({
+  return res.status(200).json({
     status: true,
     message: 'Authenticated',
   });
