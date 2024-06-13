@@ -23,7 +23,7 @@ const getRecommendations = async (
         const ids = suggestions.map((suggestion) => ({
           userId: id,
           recommendedUserId: suggestion.id,
-          priority: suggestion.priority,
+          priority: suggestion.priority || 5,
         }));
         const [err, result] = await recommendationService.bulkInsert(ids);
         if (result) {
