@@ -44,6 +44,10 @@ export const checkRecommendationLimit = async ({ userId, today, tomorrow }) => {
           [Op.gte]: today,
           [Op.lt]: tomorrow,
         },
+        // createdAt: {
+        //   [Op.gte]: tomorrow.toDate(),
+        //   [Op.lt]: today.toDate(),
+        // },
       },
       include: [
         {
