@@ -40,35 +40,35 @@ const queryBuilder = (history: string[]): string => {
     whereClause = 'AND id NOT IN(:historyIds)';
   }
 
-  const subqueries = [
-    `(SELECT id, name, gender, location, university, interests, 1 AS priority
-      FROM users
-      WHERE id != :ownerId
-      ${whereClause}
-      AND (university = (SELECT university FROM users WHERE id = :ownerId) AND
-      interests = (SELECT interests FROM users WHERE id = :ownerId))
-      LIMIT 2)`,
-    `(SELECT id, name, gender, location, university, interests, 2 AS priority
-      FROM users
-      WHERE id != :ownerId
-      ${whereClause}
-      AND (university = (SELECT university FROM users WHERE id = :ownerId) OR
-      interests = (SELECT interests FROM users WHERE id = :ownerId))
-      LIMIT 4)`,
-    `(SELECT id, name, gender, location, university, interests, 3 AS priority
-      FROM users
-      WHERE id != :ownerId
-      ${whereClause}
-      AND (university != (SELECT university FROM users WHERE id = :ownerId) AND
-      interests != (SELECT interests FROM users WHERE id = :ownerId))
-      LIMIT 10)`,
-  ];
-
   return `
-    SELECT id, name, gender, location, university, interests, priority
-    FROM (${subqueries.join(' UNION ALL ')}) AS subquery
-    ORDER BY priority
-    LIMIT 10;
+ WITH owner_data AS (
+    SELECT university, interests
+    FROM users
+    WHERE id = :ownerId
+),
+pre_weighted_users AS (
+    SELECT id, name, gender, location, university, interests,
+        RANDOM() AS random_val,
+        CASE 
+            WHEN university = (SELECT university FROM owner_data) AND interests = (SELECT interests FROM owner_data)
+            THEN 0.7
+            WHEN university = (SELECT university FROM owner_data) OR interests = (SELECT interests FROM owner_data)
+            THEN 0.2
+            ELSE 0.1
+        END AS weight_factor
+    FROM users
+    WHERE id != :ownerId
+    ${whereClause}
+),
+weighted_users AS (
+    SELECT id, name, gender, location, university, interests, weight_factor,
+           random_val * weight_factor AS weight
+    FROM pre_weighted_users
+)
+SELECT id, name, gender, location, university, interests, weight
+FROM weighted_users
+ORDER BY RANDOM() * (1 / weight_factor)
+LIMIT 10;
   `;
 };
 
